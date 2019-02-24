@@ -29,9 +29,9 @@ dependencies {
     implementation deps.support.appCompat
     implementation deps.support.constraint
     implementation deps.support.design
-    implementation project(':library')
-    implementation project(':annotation')
-    annotationProcessor project(':annotation-compiler')
+    implementation 'com.github.luoxuwei.ServiceProxy:library:1.0.0'
+    implementation 'com.github.luoxuwei.ServiceProxy:annotation:1.0.0'
+    annotationProcessor 'com.github.luoxuwei.ServiceProxy:annotation-compiler:1.0.0'
     api deps.retrofit.runtime
     api deps.retrofit.gson
     api deps.retrofit.adapter

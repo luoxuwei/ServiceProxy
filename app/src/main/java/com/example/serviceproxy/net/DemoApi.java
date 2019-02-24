@@ -6,4 +6,10 @@ import retrofit2.http.GET;
 public interface DemoApi {
     @GET("https://easy-mock.com/mock/5c511379d858826be92e5b8d/example/service_test")
     Observable<UserInfo> getUserInfo();
+
+    @GET("https://easy-mock.com/mock/5c511379d858826be92e5b8d/example/service_test1")
+    Observable<UserInfo> getUserInfo1();
+
+    @GET("https://easy-mock.com/mock/5c511379d858826be92e5b8d/example/service_test2")
+    Observable<UserInfo> getUserInfo2();
 }

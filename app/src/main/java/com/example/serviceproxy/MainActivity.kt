@@ -25,6 +25,28 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this@MainActivity, "测试失败,请检查网络情况", Toast.LENGTH_LONG).show()
                     })
         })
+        findViewById<View>(R.id.test_service1).setOnClickListener({
+            ServiceProxy.of(DemoService::class.java)
+                    .getUserName1("sss")
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        Toast.makeText(this@MainActivity, "用户名是："+it, Toast.LENGTH_LONG).show()
+                    }, {
+                        Toast.makeText(this@MainActivity, "测试失败,请检查网络情况", Toast.LENGTH_LONG).show()
+                    })
+        })
+        findViewById<View>(R.id.test_service2).setOnClickListener({
+            ServiceProxy.of(DemoService::class.java)
+                    .getUserName2("sss")
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        Toast.makeText(this@MainActivity, "用户名是："+it, Toast.LENGTH_LONG).show()
+                    }, {
+                        Toast.makeText(this@MainActivity, "测试失败,请检查网络情况", Toast.LENGTH_LONG).show()
+                    })
+        })
 
     }
 
