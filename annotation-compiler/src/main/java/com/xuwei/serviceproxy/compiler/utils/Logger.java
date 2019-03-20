@@ -13,7 +13,7 @@ import javax.tools.Diagnostic;
  * @since 16/8/22 上午11:48
  */
 public class Logger {
-    static final String PREFIX_OF_LOGGER = "NIOService::Compiler ";
+    static final String PREFIX_OF_LOGGER = "ServiceProxy::Compiler ";
     private Messager msg;
 
     public Logger(Messager messager) {
