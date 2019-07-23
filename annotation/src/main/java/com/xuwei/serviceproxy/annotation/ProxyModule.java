@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
  * Created by xuwei.luo on 18/8/31.
  */
 @Target({ElementType.TYPE})
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 public @interface ProxyModule {
 }
