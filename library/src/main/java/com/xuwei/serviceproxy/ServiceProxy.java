@@ -22,12 +22,25 @@ public class ServiceProxy {
 
     private ConcurrentHashMap<Class<?>, Object> mServiceMap = new ConcurrentHashMap();
 
-    public static void init(Retrofit retrofit) {
-        SingleHolder.instance.mRetrofit = retrofit;
+    public interface IServiceProxyRetrofit {
+        Retrofit getRetrofit();
+    }
+
+    private IServiceProxyRetrofit mServiceProxyRetrofit;
+
+    public static void init(IServiceProxyRetrofit retrofit) {
+        ServiceProxy.SingleHolder.instance.mServiceProxyRetrofit = retrofit;
+    }
+
+    private Retrofit getRetrofit() {
+        if (mRetrofit == null) {
+            mRetrofit = mServiceProxyRetrofit.getRetrofit();
+        }
+        return mRetrofit;
     }
 
     public static <T> T of(Class<T> cls) {
-        if (SingleHolder.instance.mRetrofit == null) {
+        if (SingleHolder.instance.getRetrofit() == null) {
             throw new RuntimeException("no retrofit!");
         }
         return SingleHolder.instance.getService(cls);

@@ -19,6 +19,6 @@ public class App extends Application {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        ServiceProxy.init(retrofit);
+        ServiceProxy.init(() -> retrofit);
     }
 }
