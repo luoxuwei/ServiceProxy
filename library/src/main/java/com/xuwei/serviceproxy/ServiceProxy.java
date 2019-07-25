@@ -29,7 +29,7 @@ public class ServiceProxy {
     private IServiceProxyRetrofit mServiceProxyRetrofit;
 
     public static void init(IServiceProxyRetrofit retrofit) {
-        ServiceProxy.SingleHolder.instance.mServiceProxyRetrofit = retrofit;
+        SingleHolder.instance.mServiceProxyRetrofit = retrofit;
     }
 
     private Retrofit getRetrofit() {
