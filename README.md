@@ -63,7 +63,46 @@ public abstract class DemoService implements DemoApi {
 ```
 因为继承了Retrofit接口，又不能实现接口中的方法，类必须声明为abstract。
 
-3.在使用了ServiceProxy的项目的build.gradle文件里加上注解处理器的配置.
+3.实现IRetrofitFactory接口，给代理提供retrofit对象，通常retrofit的创建是和业务绑定的，通过这个接口可以实现自己的创建逻辑指定业务相关的参数，可以通过给业务模块加@BaseUrl 注解来指定baseurl 方便创建多个不通配置的retrofit对象.
+
+```java
+@BaseUrl("https://easy-mock.com")
+@ProxyModule
+public abstract class DemoService1 implements DemoApi1 {
+
+    public Observable<String> getUserName(String id) {
+        Observable<String> res = Observable.fromCallable(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return getUserInfo().blockingFirst().nick;
+            }
+        });
+        return res;
+    }
+
+    public Observable<String> getUserName1(String id) {
+        Observable<String> res = Observable.fromCallable(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return getUserInfo1().blockingFirst().nick;
+            }
+        });
+        return res;
+    }
+
+    public Observable<String> getUserName2(String id) {
+        Observable<String> res = Observable.fromCallable(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return getUserInfo2().blockingFirst().nick;
+            }
+        });
+        return res;
+    }
+}
+```
+
+4.在使用了ServiceProxy的项目的build.gradle文件里加上注解处理器的配置.
 
 ```groovy
 annotationProcessor 'com.github.luoxuwei.ServiceProxy:annotation-compiler:1.0.1'

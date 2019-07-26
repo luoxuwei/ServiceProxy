@@ -1,6 +1,7 @@
 package com.example.serviceproxy;
 
 import android.app.Application;
+import android.text.TextUtils;
 
 import com.xuwei.serviceproxy.ServiceProxy;
 
@@ -13,12 +14,15 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://easy-mock.com/mock/5c511379d858826be92e5b8d/")
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ServiceProxy.init(() -> retrofit);
+        ServiceProxy.init(baseUrl -> {
+            if (TextUtils.isEmpty(baseUrl)) {
+                baseUrl = "https://easy-mock.com";
+            }
+            return new Retrofit.Builder()
+                    .baseUrl(baseUrl)
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        });
     }
 }

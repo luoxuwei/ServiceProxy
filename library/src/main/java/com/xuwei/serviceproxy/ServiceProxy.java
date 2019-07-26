@@ -1,6 +1,8 @@
 package com.xuwei.serviceproxy;
 
 
+import com.xuwei.serviceproxy.annotation.BaseUrl;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,48 +20,62 @@ import retrofit2.Retrofit;
 //https://medium.com/weread/%E5%9F%BA%E4%BA%8E-aop-%E7%9A%84-m-%E5%B1%82%E6%8A%BD%E8%B1%A1-fd4fd144c0d4
 public class ServiceProxy {
 
-    private Retrofit mRetrofit;
+    private ConcurrentHashMap<String, Retrofit> mRetrofitMap = new ConcurrentHashMap();
 
     private ConcurrentHashMap<Class<?>, Object> mServiceMap = new ConcurrentHashMap();
 
-    public interface IServiceProxyRetrofit {
-        Retrofit getRetrofit();
+    public interface IRetrofitFactory {
+        Retrofit create(String baseUrl);
     }
 
-    private IServiceProxyRetrofit mServiceProxyRetrofit;
+    private IRetrofitFactory mServiceProxyRetrofit;
 
-    public static void init(IServiceProxyRetrofit retrofit) {
-        SingleHolder.instance.mServiceProxyRetrofit = retrofit;
+    public static void init(IRetrofitFactory retrofitFactory) {
+        SingleHolder.instance.mServiceProxyRetrofit = retrofitFactory;
     }
 
-    private Retrofit getRetrofit() {
-        if (mRetrofit == null) {
-            mRetrofit = mServiceProxyRetrofit.getRetrofit();
+    private Retrofit getRetrofit(String baseUrl) {
+        if (!mRetrofitMap.containsKey(baseUrl)) {
+            try {
+                mRetrofitMap.putIfAbsent(baseUrl, mServiceProxyRetrofit.create(baseUrl));
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
         }
-        return mRetrofit;
+        return mRetrofitMap.get(baseUrl);
     }
 
     public static <T> T of(Class<T> cls) {
-        if (SingleHolder.instance.getRetrofit() == null) {
+        BaseUrl baseHost = cls.getAnnotation(BaseUrl.class);
+        String baseUrl = "";
+        if (baseHost != null) {
+            baseUrl = baseHost.value();
+        }
+        if (SingleHolder.instance.getRetrofit(baseUrl) == null) {
             throw new RuntimeException("no retrofit!");
         }
         return SingleHolder.instance.getService(cls);
     }
 
     private <T> T getService(Class<T> cls) {
-        if (!this.mServiceMap.containsKey(cls)) {
+        if (!mServiceMap.containsKey(cls)) {
             try {
-                this.mServiceMap.putIfAbsent(cls, create(cls));
+                mServiceMap.putIfAbsent(cls, create(cls));
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
         }
-        return (T) this.mServiceMap.get(cls);
+        return (T) mServiceMap.get(cls);
     }
 
     private <T> T create(Class<T> cls) {
+        BaseUrl baseHost = cls.getAnnotation(BaseUrl.class);
+        String baseUrl = "";
+        if (baseHost != null) {
+            baseUrl = baseHost.value();
+        }
         if (cls.isInterface() && cls.getInterfaces().length == 0) {
-            return mRetrofit.create(cls);
+            return getRetrofit(baseUrl).create(cls);
         }
         final HashSet allInterfaces = Reflections.getAllInterfaces(cls);
         return Reflections.proxy(cls, new InvocationHandler() {
