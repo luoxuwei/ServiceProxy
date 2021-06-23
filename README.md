@@ -63,9 +63,25 @@ public abstract class DemoService implements DemoApi {
 ```
 因为继承了Retrofit接口，又不能实现接口中的方法，类必须声明为abstract。
 
-3.实现IRetrofitFactory接口，给代理提供retrofit对象，通常retrofit的创建是和业务绑定的，通过这个接口可以实现自己的创建逻辑指定业务相关的参数，可以通过给业务模块加@BaseUrl 注解来指定baseurl 方便创建多个不通配置的retrofit对象.
+3.实现IRetrofitFactory接口，给代理提供retrofit对象，通常retrofit的创建是和业务绑定的，通过这个接口可以实现自己的创建逻辑指定业务相关的参数，可以通过给业务模块加@BaseUrl 注解来指定baseurl 方便创建多个不同配置的retrofit对象.
 
 ```java
+
+public interface IRetrofitFactory {
+    Retrofit create(String baseUrl);
+}
+
+ServiceProxy.init(baseUrl -> {
+    if (TextUtils.isEmpty(baseUrl)) {
+        baseUrl = "https://easy-mock.com";
+    }
+    return new Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
+        .build();
+});
+
 @BaseUrl("https://easy-mock.com")
 @ProxyModule
 public abstract class DemoService1 implements DemoApi1 {
