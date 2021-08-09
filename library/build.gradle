@@ -29,7 +29,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile project(':annotation')
+    implementation project(':annotation')
     api 'com.google.guava:guava:26.0-android'
     api deps.retrofit.runtime
 }
