@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin:'com.github.dcendents.android-maven'
-group='com.github.luoxuwei'
+
 android {
     compileSdkVersion buildVersions.compileSdk
     buildToolsVersion buildVersions.buildTools
@@ -33,3 +32,4 @@ dependencies {
     api 'com.google.guava:guava:26.0-android'
     api deps.retrofit.runtime
 }
+apply from: rootProject.file('gradle/maven-publish.gradle')
